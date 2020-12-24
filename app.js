@@ -1,7 +1,7 @@
 var canvas = document.querySelector("canvas");
 
 canvas.width = window.innerWidth -50;
-canvas.height = window.innerHeight;
+canvas.height = window.innerHeight -50;
 
 var c = canvas.getContext("2d");
 
@@ -35,7 +35,7 @@ window.addEventListener("keydown", (e)=>{
     } 
     if (e.key == "ArrowUp") {
         key.fire = true;
-        bullet.x = shooter.x;
+        bullet.x = shooter.x + 27.5;
         bullet.y = shooter.y;
     }
 })
@@ -93,8 +93,14 @@ function Shooter(x, y,){
 
     this.draw = function() {
         c.beginPath();
-        c.fillStyle = "rgba(255, 0, 0, 0.5)";
+        c.fillStyle = "rgba(0, 0, 0, 0.7)";
         c.fillRect(this.x, this.y, 60, 20);
+
+        c.moveTo((this.x + 30) - 2.5, this.y);
+        c.lineTo((this.x + 30) - 2.5, this.y - 5);
+        c.lineTo((this.x + 30) + 2.5, this.y -5);
+        c.lineTo((this.x + 30) + 2.5, this.y );
+        c.stroke()
     }
 
     this.update = function() {
@@ -118,8 +124,8 @@ function Bullet(x, y, dy) {
 
     this.draw = function() {
         c.beginPath()
-        c.fillStyle = "rgba(0, 0, 255, 0.5)"
-        c.fillRect(this.x, this.y, 30, 30)
+        c.fillStyle = "rgba(0, 0, 0, 0.7)"
+        c.fillRect(this.x, this.y, 5, 5)
     }
     this.update = function() {
         if (this.y < 0) {
