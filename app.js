@@ -35,6 +35,8 @@ window.addEventListener("keydown", (e)=>{
     } 
     if (e.key == "ArrowUp") {
         key.fire = true;
+        bullet.x = shooter.x;
+        bullet.y = shooter.y;
     }
 })
 window.addEventListener("mousemove", 
@@ -121,8 +123,6 @@ function Bullet(x, y, dy) {
     }
     this.update = function() {
         if (this.y < 0) {
-            bullet.x = shooter.x;
-            bullet.y = shooter.y;
             key.fire = false;
         }
         this.y -= this.dy;
@@ -161,7 +161,6 @@ function animate() {
     shooter.update();
 
     if (key.fire == true) {
-        console.log("f")
         bullet.update();
     }
     
