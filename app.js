@@ -20,6 +20,7 @@ var colorArray = [
     "#e76f51",
 ]
 
+
 window.addEventListener("mousemove", 
     function(event) {
         mouse.x = event.x
@@ -49,12 +50,18 @@ function Circle(x, y, dx, dy, radius) {
     }
 
     this.update = function() {
-        if (this.x + this.radius > innerWidth || this.x - this.radius < 0) {
+
+        if (this.x + this.radius > innerWidth || this.x - this.radius < 0 ) {
             this.dx = -this.dx;
         }
         if (this.y + this.radius > innerHeight || this.y - this.radius < 0) {
             this.dy = -this.dy;
         }
+        if (this.cricle != circleArray[14]) {
+            this.dx = circleArray[14].dx
+        }
+
+        
         this.x += this.dx;
         // this.y += this.dy;
 
@@ -69,6 +76,19 @@ function Circle(x, y, dx, dy, radius) {
         this.draw();
     }
 }
+
+function Shooter(x, y, dx){
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+
+    this.draw = function() {
+        c.beginPath();
+        c.fillStyle = "rgba(255, 0, 0, 0.5)";
+        c.fillRect((innerWidth / 2), (innerHeight - 100), this.y, this.x);
+    }
+
+}
 var circleArray = [];
 
 function init(){
@@ -78,13 +98,13 @@ function init(){
             var radius = 20;
             var x = 150 + (i *70) ;
             var y = 100 + (j *80);
-            var dx = 0.5;
+            var dx = 10;
             var dy = (Math.random() - 0.5) * 3;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
 }
-
+var shooter = new Shooter(20, 60);
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth,  innerHeight);
@@ -92,6 +112,7 @@ function animate() {
     for (var i = 0; i < circleArray.length; i++) {
         circleArray[i].update();
     }
+    shooter.draw();
 
 }
 init();
