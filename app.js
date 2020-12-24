@@ -1,6 +1,6 @@
 var canvas = document.querySelector("canvas");
 
-canvas.width = window.innerWidth ;
+canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight;
 
 var c = canvas.getContext("2d");
@@ -22,13 +22,19 @@ var colorArray = [
 var key = {
     left: false,
     right: false,
+    fire : false,
 }
 
 window.addEventListener("keydown", (e)=>{
     if (e.key == "ArrowLeft") {
         key.left = true;
-    } else if(e.key == "ArrowRight") {
+    } 
+    else if(e.key == "ArrowRight") {
         key.right = true;
+
+    } 
+    if (e.key == "ArrowUp") {
+        key.fire = true;
     }
 })
 window.addEventListener("mousemove", 
@@ -75,14 +81,6 @@ function Circle(x, y, dx, dy, radius) {
         this.x += this.dx;
         // this.y += this.dy;
 
-        //inertactivity
-        if (mouse.x - this.x < 50 && mouse.x - this.x > -50 && mouse.y -this.y < 50 && mouse.y - this.y > -50) {
-            if (this.radius < maxRadius) {
-                this.radius += 6;
-            }
-        } else if (this.radius > this.minRadius) {
-            this.radius -= 1;
-        }
         this.draw();
     }
 }
@@ -110,6 +108,29 @@ function Shooter(x, y,){
     }
 
 }
+
+function Bullet(x, y, dy) {
+    this.x = x;
+    this.y = y;
+    this.dy = dy;
+
+    this.draw = function() {
+        c.beginPath()
+        c.fillStyle = "rgba(0, 0, 255, 0.5)"
+        c.fillRect(this.x, this.y, 30, 30)
+    }
+    this.update = function() {
+        if (this.y < 0) {
+            bullet.x = shooter.x;
+            bullet.y = shooter.y;
+            key.fire = false;
+        }
+        this.y -= this.dy;
+        this.draw();
+    }
+
+
+}
 var circleArray = [];
 
 function init(){
@@ -119,13 +140,17 @@ function init(){
             var radius = 20;
             var x = 150 + (i *70) ;
             var y = 100 + (j *80);
-            var dx = 10;
+            var dx = 2;
             var dy = (Math.random() - 0.5) * 3;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
 }
 var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
+
+var bullet = new Bullet(shooter.x, shooter.y, 5);
+
+
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth,  innerHeight);
@@ -134,6 +159,12 @@ function animate() {
         circleArray[i].update();
     }
     shooter.update();
+
+    if (key.fire == true) {
+        console.log("f")
+        bullet.update();
+    }
+    
 
 }
 init();

@@ -1,6 +1,4 @@
-canvas {
-    border: 1px solid black;
-}
-body {
+html, body {
     margin: 0;
+    padding: 0;
 }
