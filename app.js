@@ -1,6 +1,6 @@
 var canvas = document.querySelector("canvas");
 
-canvas.width = window.innerWidth;
+canvas.width = window.innerWidth ;
 canvas.height = window.innerHeight;
 
 var c = canvas.getContext("2d");
@@ -19,8 +19,18 @@ var colorArray = [
     "#f4a261",
     "#e76f51",
 ]
+var key = {
+    left: false,
+    right: false,
+}
 
-
+window.addEventListener("keydown", (e)=>{
+    if (e.key == "ArrowLeft") {
+        key.left = true;
+    } else if(e.key == "ArrowRight") {
+        key.right = true;
+    }
+})
 window.addEventListener("mousemove", 
     function(event) {
         mouse.x = event.x
@@ -77,15 +87,26 @@ function Circle(x, y, dx, dy, radius) {
     }
 }
 
-function Shooter(x, y, dx){
+function Shooter(x, y,){
     this.x = x;
     this.y = y;
-    this.dx = dx;
 
     this.draw = function() {
         c.beginPath();
         c.fillStyle = "rgba(255, 0, 0, 0.5)";
-        c.fillRect((innerWidth / 2), (innerHeight - 100), this.y, this.x);
+        c.fillRect(this.x, this.y, 60, 20);
+    }
+
+    this.update = function() {
+        if (key.left == true) {
+            this.x -= 5;
+            key.left = false;
+        } 
+        if (key.right == true) {
+            this.x += 5;
+            key.right = false;
+        }
+        this.draw();
     }
 
 }
@@ -104,7 +125,7 @@ function init(){
         }
     }
 }
-var shooter = new Shooter(20, 60);
+var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth,  innerHeight);
@@ -112,7 +133,7 @@ function animate() {
     for (var i = 0; i < circleArray.length; i++) {
         circleArray[i].update();
     }
-    shooter.draw();
+    shooter.update();
 
 }
 init();
