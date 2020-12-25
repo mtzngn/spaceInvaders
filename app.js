@@ -5,19 +5,12 @@ canvas.height = window.innerHeight -50;
 
 var c = canvas.getContext("2d");
 
-var mouse = {
-    x: undefined,
-    y: undefined,
-}
-var minRadius = 10;
-var maxRadius = 70;
+//size of aliens can be limited in the event of interactivities
+// var minRadius = 10;
+// var maxRadius = 70;
 
 var colorArray = [
-    "#264653",
-    "#2a9d8f",
-    "#e9c46a",
-    "#f4a261",
-    "#e76f51",
+    "#000000",
 ]
 var key = {
     left: false,
@@ -25,20 +18,6 @@ var key = {
     fire : false,
 }
 
-window.addEventListener("keydown", (e)=>{
-    if (e.key == "ArrowLeft") {
-        key.left = true;
-    } 
-    else if(e.key == "ArrowRight") {
-        key.right = true;
-
-    } 
-    if (e.key == "ArrowUp") {
-        key.fire = true;
-        bullet.x = shooter.x + 27.5;
-        bullet.y = shooter.y;
-    }
-})
 window.addEventListener("mousemove", 
     function(event) {
         mouse.x = event.x
@@ -100,6 +79,7 @@ function Shooter(x, y,){
         c.lineTo((this.x + 30) - 2.5, this.y - 5);
         c.lineTo((this.x + 30) + 2.5, this.y -5);
         c.lineTo((this.x + 30) + 2.5, this.y );
+        c.strokeStyle = "rgba(0, 0, 0, 0.7)";
         c.stroke()
     }
 
@@ -114,7 +94,6 @@ function Shooter(x, y,){
         }
         this.draw();
     }
-
 }
 
 function Bullet(x, y, dy) {
@@ -125,7 +104,7 @@ function Bullet(x, y, dy) {
     this.draw = function() {
         c.beginPath()
         c.fillStyle = "rgba(0, 0, 0, 0.7)"
-        c.fillRect(this.x, this.y, 5, 5)
+        c.fillRect(this.x, this.y, 5, 15)
     }
     this.update = function() {
         if (this.y < 0) {
@@ -134,10 +113,21 @@ function Bullet(x, y, dy) {
         this.y -= this.dy;
         this.draw();
     }
-
-
 }
+let bullets = [];
 var circleArray = [];
+
+window.addEventListener("keydown", (e)=>{
+    if (e.key == "ArrowLeft") {
+        key.left = true;
+    } 
+    else if(e.key == "ArrowRight") {
+        key.right = true;
+    } 
+    if (e.key == "ArrowUp") {
+        bullets.push(new Bullet(shooter.x + 27.5, shooter.y, 10))
+    }
+})
 
 function init(){
     circleArray = [];
@@ -146,16 +136,14 @@ function init(){
             var radius = 20;
             var x = 150 + (i *70) ;
             var y = 100 + (j *80);
-            var dx = 2;
+            var dx = 0.5;
             var dy = (Math.random() - 0.5) * 3;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
 }
+
 var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
-
-var bullet = new Bullet(shooter.x, shooter.y, 5);
-
 
 function animate() {
     requestAnimationFrame(animate);
@@ -165,11 +153,9 @@ function animate() {
         circleArray[i].update();
     }
     shooter.update();
-
-    if (key.fire == true) {
-        bullet.update();
+    for (var i = 0; i < bullets.length; i++) {
+        bullets[i].update();
     }
-    
 
 }
 init();
