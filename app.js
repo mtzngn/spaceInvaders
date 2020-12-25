@@ -130,31 +130,42 @@ function init(){
             var radius = 20;
             var x = 150 + (i *70) ;
             var y = 100 + (j *80);
-            var dx = 1;
-            var dy = 20;
+            var dx = 10;
+            var dy = 80;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
 }
-
+let AnimationId
 var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
 function animate() {
-    requestAnimationFrame(animate);
+    AnimationId = requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth,  innerHeight);
 
     for (var i = 0; i < circleArray.length; i++) {
         circleArray[i].update();
+        //end game
+        const dist = Math.hypot(shooter.x - circleArray[i].x, shooter.y - circleArray[i].y)
+        if(dist - circleArray[i].radius < 1) {
+            cancelAnimationFrame(AnimationId);
+
+        }
+
     }
     shooter.update();
-
+    
     bullets.forEach((bullet, index)=>{
         bullet.update();
 
         circleArray.forEach((circle, circleIndex)=>{                      
-            var dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
+            const dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
+            //objects touch
             if(dist - circle.radius < 1) {
-                bullets.splice(index, 1);
-                circleArray.splice(circleIndex, 1);
+                setTimeout(() => {
+                    bullets.splice(index, 1);
+                    circleArray.splice(circleIndex, 1);                    
+                }, 0);
+
             }
         })
 
