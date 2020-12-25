@@ -5,10 +5,6 @@ canvas.height = window.innerHeight -50;
 
 var c = canvas.getContext("2d");
 
-//size of aliens can be limited in the event of interactivities
-// var minRadius = 10;
-// var maxRadius = 70;
-
 var colorArray = [
     "#000000",
 ]
@@ -17,7 +13,10 @@ var key = {
     right: false,
     fire : false,
 }
-
+let goRight = true;
+let goDown = false;
+var img1 = new Image;
+img1.src = "//i.stack.imgur.com/EU6KB.jpg"
 addEventListener("resize", function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -42,20 +41,23 @@ function Circle(x, y, dx, dy, radius) {
 
     this.update = function() {
 
-        if (this.x + this.radius > innerWidth || this.x - this.radius < 0 ) {
-            this.dx = -this.dx;
+        if (this.x + this.radius > innerWidth -50) {
+            goRight = false;
+            goDown = true;
+        } 
+        else if (this.x - this.radius < 0 ) {
+            goRight = true;
         }
-        // if (this.y + this.radius > innerHeight || this.y - this.radius < 0) {
-        //     this.dy = -this.dy;
-        // }
-        if (this.cricle != circleArray[14]) {
-            this.dx = circleArray[14].dx
+        if (goRight == true){
+            this.x += this.dx;
+        } else {this.x -= this.dx;}
+
+        if (goDown == true) {
+        circleArray.forEach((circle)=>{
+            circle.y +=5
+        });
+        goDown = false;
         }
-
-        
-        this.x += this.dx;
-        // this.y += this.dy;
-
         this.draw();
     }
 }
@@ -78,17 +80,16 @@ function Shooter(x, y,){
     }
     this.update = function() {
         if (key.left == true) {
-            this.x -= 5;
+            this.x -= 10;
             key.left = false;
         } 
         if (key.right == true) {
-            this.x += 5;
+            this.x += 10;
             key.right = false;
         }
         this.draw();
     }
 }
-
 function Bullet(x, y, dy) {
     this.x = x;
     this.y = y;
@@ -129,15 +130,14 @@ function init(){
             var radius = 20;
             var x = 150 + (i *70) ;
             var y = 100 + (j *80);
-            var dx = 0.5;
-            var dy = (Math.random() - 0.5) * 3;
+            var dx = 1;
+            var dy = 20;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
 }
 
 var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
-
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth,  innerHeight);
@@ -149,14 +149,15 @@ function animate() {
 
     bullets.forEach((bullet, index)=>{
         bullet.update();
-        circleArray.forEach((circle, circleIndex)=>{
-            
+
+        circleArray.forEach((circle, circleIndex)=>{                      
             var dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
             if(dist - circle.radius < 1) {
                 bullets.splice(index, 1);
                 circleArray.splice(circleIndex, 1);
             }
-        })     
+        })
+
     })
 }
 init();
