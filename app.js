@@ -18,13 +18,7 @@ var key = {
     fire : false,
 }
 
-window.addEventListener("mousemove", 
-    function(event) {
-        mouse.x = event.x
-        mouse.y = event.y
-});
-
-window.addEventListener("resize", function() {
+addEventListener("resize", function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     init();
@@ -51,9 +45,9 @@ function Circle(x, y, dx, dy, radius) {
         if (this.x + this.radius > innerWidth || this.x - this.radius < 0 ) {
             this.dx = -this.dx;
         }
-        if (this.y + this.radius > innerHeight || this.y - this.radius < 0) {
-            this.dy = -this.dy;
-        }
+        // if (this.y + this.radius > innerHeight || this.y - this.radius < 0) {
+        //     this.dy = -this.dy;
+        // }
         if (this.cricle != circleArray[14]) {
             this.dx = circleArray[14].dx
         }
@@ -82,7 +76,6 @@ function Shooter(x, y,){
         c.strokeStyle = "rgba(0, 0, 0, 0.7)";
         c.stroke()
     }
-
     this.update = function() {
         if (key.left == true) {
             this.x -= 5;
@@ -153,10 +146,18 @@ function animate() {
         circleArray[i].update();
     }
     shooter.update();
-    for (var i = 0; i < bullets.length; i++) {
-        bullets[i].update();
-    }
 
+    bullets.forEach((bullet, index)=>{
+        bullet.update();
+        circleArray.forEach((circle, circleIndex)=>{
+            
+            var dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
+            if(dist - circle.radius < 1) {
+                bullets.splice(index, 1);
+                circleArray.splice(circleIndex, 1);
+            }
+        })     
+    })
 }
 init();
 animate();
