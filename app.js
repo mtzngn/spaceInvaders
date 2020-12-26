@@ -17,7 +17,6 @@ var key = {
 
 let goRight = true;
 let goDown = false;
-var img1 = new Image;
 // resize the size of canvas according to what user adjusts their browser
 addEventListener("resize", function() {
     canvas.width = window.innerWidth;
@@ -171,6 +170,11 @@ function animate() {
     shooter.update();
     
     bullets.forEach((bullet, index)=>{
+        if (bullet.y < 0) {
+            setTimeout(() => {
+                bullets.splice(index, 1);
+            }, 0);
+        }
         bullet.update();
 
         circleArray.forEach((circle, circleIndex)=>{                      
