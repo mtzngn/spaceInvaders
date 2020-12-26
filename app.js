@@ -1,5 +1,4 @@
 var canvas = document.querySelector("canvas");
-
 canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight -50;
 
@@ -90,7 +89,6 @@ function Particles(x, y, dx, dy, radius) {
         c.fill();
         c.restore();
     }
-
     this.update = function() {
         this.draw();
         this.dx *= friction;
@@ -151,22 +149,15 @@ function Bullet(x, y, dy) {
 window.addEventListener("keydown", (e)=>{
     //shooter is not allowed to go further than innerWidth
     if (shooter.x - 30 < 0) {
-        if(e.key == "ArrowRight") {
-            key.right = true;
-        } 
+        if(e.key == "ArrowRight") {key.right = true;} 
     }
     else if (shooter.x > innerWidth - 118) {
-        if (e.key == "ArrowLeft") {
-            key.left = true;
-        } 
+        if (e.key == "ArrowLeft") {key.left = true;} 
     }
-    else {    if (e.key == "ArrowLeft") {
-        key.left = true;
-    } 
-    else if(e.key == "ArrowRight") {
-        key.right = true;
-    } 
-}
+    else {    
+        if (e.key == "ArrowLeft") {key.left = true;} 
+        else if(e.key == "ArrowRight") {key.right = true;} 
+    }
     if (e.key == "ArrowUp") {
         bullets.push(new Bullet(shooter.x + 27.5, shooter.y, 10))
     }
@@ -191,7 +182,6 @@ function init(){
         }
     }
 }
-
 let AnimationId
 var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
 let score = 0;
@@ -208,7 +198,6 @@ function animate() {
             cancelAnimationFrame(AnimationId);
             modal.style.display = "flex";
             bigScore.innerHTML = score;
-
         }
     }
     shooter.update();
@@ -216,7 +205,6 @@ function animate() {
         if (particle.alpha <= 0.01) {
             particles.splice(index, 1)
         } else {
-          
             particle.update()
         }
     })
@@ -227,13 +215,12 @@ function animate() {
                 bullets.splice(index, 1);
             }, 0);
         }
-        bullet.update();
 
+        bullet.update();
 
         circleArray.forEach((circle, circleIndex)=>{                      
             const dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
             //objects touch
-
             if(dist - circle.radius < 0.5) {
                 //increse the score
                 score += 100;
@@ -245,7 +232,7 @@ function animate() {
                         circle.y, 
                         (Math.random() - 0.5) * (Math.random() * 9),
                         (Math.random() - 0.5) * (Math.random() * 9),
-                        4 * Math.random()))
+                        3 * Math.random()))
                 }
                 setTimeout(() => {
                     bullets.splice(index, 1);
