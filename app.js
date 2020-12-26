@@ -6,8 +6,11 @@ canvas.height = window.innerHeight -50;
 var c = canvas.getContext("2d");
 //in colorArray the given colors randomly appointed to the balls
 var colorArray = [
-    "#000000",
+    "#ffffff",
 ]
+const bullets = [];
+var circleArray = [];
+var particles = [];
 
 var key = {
     left: false,
@@ -65,19 +68,44 @@ function Circle(x, y, dx, dy, radius) {
     }
 }
 
+function Particles(x, y, dx, dy, radius) {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.radius = radius;
+
+    this.draw = function() {
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        c.fillStyle = "#ffffff";
+        c.fill();
+    }
+
+    this.update = function() {
+        this.x += this.dx;
+        this.y += this.dy;
+
+        this.draw();
+    }
+}
+
+
+
+
 function Shooter(x, y,){
     this.x = x;
     this.y = y;
 
     this.draw = function() {
         c.beginPath();
-        c.fillStyle = "rgba(0, 0, 0, 0.7)";
+        c.fillStyle = "rgba(255, 255, 255, 0.7)";
         c.fillRect(this.x, this.y, 60, 20);
         c.moveTo((this.x + 30) - 2.5, this.y);
         c.lineTo((this.x + 30) - 2.5, this.y - 5);
         c.lineTo((this.x + 30) + 2.5, this.y -5);
         c.lineTo((this.x + 30) + 2.5, this.y );
-        c.strokeStyle = "rgba(0, 0, 0, 0.7)";
+        c.strokeStyle = "rgba(255, 255, 255, 0.7)";
         c.stroke()
     }
     //shooters right and left movement handled part1
@@ -100,7 +128,7 @@ function Bullet(x, y, dy) {
 
     this.draw = function() {
         c.beginPath()
-        c.fillStyle = "rgba(0, 0, 0, 0.7)"
+        c.fillStyle = "rgba(255, 255, 255, 0.7)"
         c.fillRect(this.x, this.y, 5, 15)
     }
     this.update = function() {
@@ -111,8 +139,7 @@ function Bullet(x, y, dy) {
         this.draw();
     }
 }
-let bullets = [];
-var circleArray = [];
+
 //shooter movement handled part2. 
 window.addEventListener("keydown", (e)=>{
     //shooter is not allowed to go further than innerWidth
@@ -146,7 +173,7 @@ function init(){
             var x = 150 + (i *70) ;
             var y = 10 + (j *80);
             var dx = 1;
-            var dy = 80;
+            var dy = 100;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
@@ -157,7 +184,8 @@ var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
 
 function animate() {
     AnimationId = requestAnimationFrame(animate);
-    c.clearRect(0, 0, innerWidth,  innerHeight);
+    c.fillStyle = "rgba(0, 0, 0, 0.15)"
+    c.fillRect(0, 0, innerWidth,  innerHeight);
 
     for (var i = 0; i < circleArray.length; i++) {
         circleArray[i].update();
@@ -176,11 +204,17 @@ function animate() {
             }, 0);
         }
         bullet.update();
+        particles.forEach((particle)=>{
+            particle.update()
+        })
 
         circleArray.forEach((circle, circleIndex)=>{                      
             const dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
             //objects touch
             if(dist - circle.radius < 1) {
+                for (let i = 0; i < 8; i++) {
+                    particles.push(new Particles(circle.x, circle.y, Math.random() - 0.5 , Math.random() - 0.5, 3))
+                }
                 setTimeout(() => {
                     bullets.splice(index, 1);
                     circleArray.splice(circleIndex, 1);                    
