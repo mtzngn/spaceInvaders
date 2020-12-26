@@ -4,6 +4,8 @@ canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight -50;
 
 var c = canvas.getContext("2d");
+
+const scoreE = document.querySelector("#scoreE");
 //in colorArray the given colors randomly appointed to the balls
 var colorArray = [
     "#ffffff",
@@ -67,32 +69,34 @@ function Circle(x, y, dx, dy, radius) {
         this.draw();
     }
 }
-
+const friction = 0.99;
 function Particles(x, y, dx, dy, radius) {
     this.x = x;
     this.y = y;
     this.dx = dx;
     this.dy = dy;
     this.radius = radius;
+    this.alpha = 1;
 
     this.draw = function() {
+        c.save();
+        c.globalAlpha = this.alpha
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         c.fillStyle = "#ffffff";
         c.fill();
+        c.restore();
     }
 
     this.update = function() {
+        this.draw();
+        this.dx *= friction;
+        this.dy *= friction;
         this.x += this.dx;
         this.y += this.dy;
-
-        this.draw();
+        this.alpha -= 0.01;
     }
 }
-
-
-
-
 function Shooter(x, y,){
     this.x = x;
     this.y = y;
@@ -181,7 +185,7 @@ function init(){
 
 let AnimationId
 var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
-
+let score = 0;
 function animate() {
     AnimationId = requestAnimationFrame(animate);
     c.fillStyle = "rgba(0, 0, 0, 0.15)"
@@ -196,6 +200,14 @@ function animate() {
         }
     }
     shooter.update();
+    particles.forEach((particle, index)=>{
+        if (particle.alpha <= 0.01) {
+            particles.splice(index, 1)
+        } else {
+          
+            particle.update()
+        }
+    })
     
     bullets.forEach((bullet, index)=>{
         if (bullet.y < 0) {
@@ -204,16 +216,24 @@ function animate() {
             }, 0);
         }
         bullet.update();
-        particles.forEach((particle)=>{
-            particle.update()
-        })
+
 
         circleArray.forEach((circle, circleIndex)=>{                      
             const dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
             //objects touch
+
             if(dist - circle.radius < 1) {
-                for (let i = 0; i < 8; i++) {
-                    particles.push(new Particles(circle.x, circle.y, Math.random() - 0.5 , Math.random() - 0.5, 3))
+                //increse the score
+                score += 100;
+                scoreE.innerHTML  =score;
+                //create particles
+                for (let i = 0; i < 20; i++) {
+                    particles.push(new Particles(
+                        circle.x,
+                        circle.y, 
+                        (Math.random() - 0.5) * (Math.random() *14),
+                        (Math.random() - 0.5) * (Math.random() *14),
+                        3 * Math.random()))
                 }
                 setTimeout(() => {
                     bullets.splice(index, 1);
