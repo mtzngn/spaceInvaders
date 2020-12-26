@@ -1,2 +1,2 @@
 # spaceInvaders
-Simple game created by using canvas in javascript.
+Simple game created from scratch by using canvas in javascript.
