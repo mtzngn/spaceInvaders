@@ -6,6 +6,8 @@ canvas.height = window.innerHeight -50;
 var c = canvas.getContext("2d");
 
 const scoreE = document.querySelector("#scoreE");
+const startGameBtn = document.querySelector("#startGameBtn");
+const modal = document.querySelector("#modal");
 //in colorArray the given colors randomly appointed to the balls
 var colorArray = [
     "#ffffff",
@@ -243,5 +245,8 @@ function animate() {
         })
     })
 }
-init();
-animate();
+startGameBtn.addEventListener("click", ()=>{
+    init();
+    animate();
+    modal.style.display = "none"
+})
