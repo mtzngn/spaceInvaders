@@ -4,19 +4,21 @@ canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight -50;
 
 var c = canvas.getContext("2d");
-
+//in colorArray the given colors randomly appointed to the balls
 var colorArray = [
     "#000000",
 ]
+
 var key = {
     left: false,
     right: false,
     fire : false,
 }
+
 let goRight = true;
 let goDown = false;
 var img1 = new Image;
-img1.src = "//i.stack.imgur.com/EU6KB.jpg"
+// resize the size of canvas according to what user adjusts their browser
 addEventListener("resize", function() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -40,7 +42,7 @@ function Circle(x, y, dx, dy, radius) {
     }
 
     this.update = function() {
-
+        //we handle the direction of balls
         if (this.x + this.radius > innerWidth -50) {
             goRight = false;
             goDown = true;
@@ -50,12 +52,14 @@ function Circle(x, y, dx, dy, radius) {
         }
         if (goRight == true){
             this.x += this.dx;
-        } else {this.x -= this.dx;}
-
+        } else {
+            this.x -= this.dx;
+        }
+        //when ever the balls comes to edge we make them closer to the bottom
         if (goDown == true) {
         circleArray.forEach((circle)=>{
-            circle.y +=5
-        });
+            circle.y +=20
+        })
         goDown = false;
         }
         this.draw();
@@ -70,7 +74,6 @@ function Shooter(x, y,){
         c.beginPath();
         c.fillStyle = "rgba(0, 0, 0, 0.7)";
         c.fillRect(this.x, this.y, 60, 20);
-
         c.moveTo((this.x + 30) - 2.5, this.y);
         c.lineTo((this.x + 30) - 2.5, this.y - 5);
         c.lineTo((this.x + 30) + 2.5, this.y -5);
@@ -78,6 +81,7 @@ function Shooter(x, y,){
         c.strokeStyle = "rgba(0, 0, 0, 0.7)";
         c.stroke()
     }
+    //shooters right and left movement handled part1
     this.update = function() {
         if (key.left == true) {
             this.x -= 10;
@@ -110,34 +114,48 @@ function Bullet(x, y, dy) {
 }
 let bullets = [];
 var circleArray = [];
-
+//shooter movement handled part2. 
 window.addEventListener("keydown", (e)=>{
-    if (e.key == "ArrowLeft") {
+    //shooter is not allowed to go further than innerWidth
+    if (shooter.x - 30 < 0) {
+        if(e.key == "ArrowRight") {
+            key.right = true;
+        } 
+    }
+    else if (shooter.x > innerWidth - 118) {
+        if (e.key == "ArrowLeft") {
+            key.left = true;
+        } 
+    }
+    else {    if (e.key == "ArrowLeft") {
         key.left = true;
     } 
     else if(e.key == "ArrowRight") {
         key.right = true;
     } 
+}
     if (e.key == "ArrowUp") {
         bullets.push(new Bullet(shooter.x + 27.5, shooter.y, 10))
     }
 })
-
+//initializing the balls at teh beggining 
 function init(){
     circleArray = [];
     for(var j = 1; j < 5; j++) {
         for (var i =1; i < 16; i++) {
             var radius = 20;
             var x = 150 + (i *70) ;
-            var y = 100 + (j *80);
-            var dx = 10;
+            var y = 10 + (j *80);
+            var dx = 1;
             var dy = 80;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
 }
+
 let AnimationId
 var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
+
 function animate() {
     AnimationId = requestAnimationFrame(animate);
     c.clearRect(0, 0, innerWidth,  innerHeight);
@@ -146,11 +164,9 @@ function animate() {
         circleArray[i].update();
         //end game
         const dist = Math.hypot(shooter.x - circleArray[i].x, shooter.y - circleArray[i].y)
-        if(dist - circleArray[i].radius < 1) {
+        if(dist - circleArray[i].radius < 1 || circleArray[i].y > innerHeight - 100) {
             cancelAnimationFrame(AnimationId);
-
         }
-
     }
     shooter.update();
     
@@ -165,10 +181,8 @@ function animate() {
                     bullets.splice(index, 1);
                     circleArray.splice(circleIndex, 1);                    
                 }, 0);
-
             }
         })
-
     })
 }
 init();
