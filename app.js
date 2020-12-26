@@ -8,13 +8,14 @@ var c = canvas.getContext("2d");
 const scoreE = document.querySelector("#scoreE");
 const startGameBtn = document.querySelector("#startGameBtn");
 const modal = document.querySelector("#modal");
+const bigScore = document.querySelector("#bigScore");
 //in colorArray the given colors randomly appointed to the balls
 var colorArray = [
     "#ffffff",
 ]
-const bullets = [];
-var circleArray = [];
-var particles = [];
+let bullets = [];
+let circleArray = [];
+let particles = [];
 
 var key = {
     left: false,
@@ -172,6 +173,12 @@ window.addEventListener("keydown", (e)=>{
 })
 //initializing the balls at teh beggining 
 function init(){
+    score = 0;
+    scoreE.innerHTML = score;
+    bigScore.innerHTML = score;
+    bullets = [];
+    circleArray = [];
+    particles = [];
     circleArray = [];
     for(var j = 1; j < 5; j++) {
         for (var i =1; i < 16; i++) {
@@ -199,6 +206,9 @@ function animate() {
         const dist = Math.hypot(shooter.x - circleArray[i].x, shooter.y - circleArray[i].y)
         if(dist - circleArray[i].radius < 1 || circleArray[i].y > innerHeight - 100) {
             cancelAnimationFrame(AnimationId);
+            modal.style.display = "flex";
+            bigScore.innerHTML = score;
+
         }
     }
     shooter.update();
@@ -224,7 +234,7 @@ function animate() {
             const dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
             //objects touch
 
-            if(dist - circle.radius < 1) {
+            if(dist - circle.radius < 0.5) {
                 //increse the score
                 score += 100;
                 scoreE.innerHTML  =score;
@@ -233,9 +243,9 @@ function animate() {
                     particles.push(new Particles(
                         circle.x,
                         circle.y, 
-                        (Math.random() - 0.5) * (Math.random() *14),
-                        (Math.random() - 0.5) * (Math.random() *14),
-                        3 * Math.random()))
+                        (Math.random() - 0.5) * (Math.random() * 9),
+                        (Math.random() - 0.5) * (Math.random() * 9),
+                        4 * Math.random()))
                 }
                 setTimeout(() => {
                     bullets.splice(index, 1);
