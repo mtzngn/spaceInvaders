@@ -64,7 +64,7 @@ function Circle(x, y, dx, dy, radius) {
         //when ever the balls comes to edge we make them closer to the bottom
         if (goDown == true) {
         circleArray.forEach((circle)=>{
-            circle.y +=20
+            circle.y +=40
         })
         goDown = false;
         }
@@ -117,6 +117,7 @@ function Shooter(x, y,){
     this.update = function() {
         if (key.left == true) {
             this.x -= 10;
+            
             key.left = false;
         } 
         if (key.right == true) {
@@ -158,7 +159,7 @@ window.addEventListener("keydown", (e)=>{
         if (e.key == "ArrowLeft") {key.left = true;} 
         else if(e.key == "ArrowRight") {key.right = true;} 
     }
-    if (e.key == "ArrowUp") {
+    if (e.key == "ArrowUp" || e.which == 32) {
         bullets.push(new Bullet(shooter.x + 27.5, shooter.y, 10))
     }
 })
@@ -175,7 +176,7 @@ function init(){
         for (var i =1; i < 16; i++) {
             var radius = 20;
             var x = 150 + (i *70) ;
-            var y = 10 + (j *80);
+            var y = 10 + (j *60);
             var dx = 1;
             var dy = 100;
             circleArray.push(new Circle(x, y, dx, dy, radius))
@@ -210,7 +211,7 @@ function animate() {
     })
     
     bullets.forEach((bullet, index)=>{
-        if (bullet.y < 0) {
+        if (bullet.y < 0 || index > 0) {
             setTimeout(() => {
                 bullets.splice(index, 1);
             }, 0);
