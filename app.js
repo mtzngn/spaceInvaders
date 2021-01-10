@@ -22,6 +22,7 @@ let particles = [];
 let starArray = [];
 let alienArray = [];
 let ufoArray = [];
+let moveAlien = 0;
 
 //flags for keyboard usage for controls
 let key = {
@@ -95,6 +96,44 @@ function Alien(x, y, dx, dy, size) {
         c.fillRect(this.x + this.size * 6, this.y + 7 * this.size, this.size, this.size)
 
         c.closePath()
+        
+        
+
+    }
+    this.drawMovement = function() {
+        c.beginPath()
+        c.fillStyle = this.color;
+
+        //row0
+        c.fillRect(this.x + this.size * 2, this.y, this.size ,this.size)
+        c.fillRect(this.x + this.size * 7, this.y,this.size, this.size)
+        //row1
+        c.fillRect(this.x + this.size * 3, this.y + this.size, this.size ,this.size)
+        c.fillRect(this.x + this.size * 6, this.y + this.size, this.size, this.size)
+        //row2
+        c.fillRect(this.x, this.y + 2 * this.size, this.size, this.size)
+        c.fillRect(this.x + this.size * 2, this.y + 2 * this.size, this.size * 6, this.size)
+        c.fillRect(this.x + this.size * 9, this.y + 2 * this.size, this.size, this.size)
+        //row3
+        c.fillRect(this.x  , this.y + 3 * this.size, this.size * 3 ,this.size)
+        c.fillRect(this.x + this.size * 4, this.y + 3 * this.size, this.size * 2 ,this.size)
+        c.fillRect(this.x + this.size * 7, this.y + 3 * this.size, this.size * 3 ,this.size)
+        //row4
+        c.fillRect(this.x , this.y + 4 * this.size, this.size * 10 ,this.size)
+        //row5
+        c.fillRect(this.x + this.size * 2, this.y + 5 * this.size, this.size * 6, this.size)
+
+        //row6
+        c.fillRect(this.x + this.size * 2, this.y + 6 * this.size, this.size, this.size)
+        c.fillRect(this.x + this.size * 7, this.y + 6 * this.size, this.size, this.size)
+        //row6
+        c.fillRect(this.x + this.size , this.y + 7 * this.size, this.size, this.size)
+        c.fillRect(this.x + this.size * 8, this.y + 7 * this.size, this.size, this.size)
+
+        c.closePath()
+        if (moveAlien > 5000) {
+            moveAlien = 0;
+        }
     }
 
     this.update = function() {
@@ -115,7 +154,14 @@ function Alien(x, y, dx, dy, size) {
             })
             goDown = false;
         }
-        this.draw()
+        moveAlien++
+        if (moveAlien < 2500) {
+            this.draw();
+        } else if (2500 < moveAlien < 5000) {
+            this.drawMovement();
+
+        }
+
     }
 }
 //ufo will be created with function below. it will come now and than and will give extra point when killed.
@@ -161,6 +207,7 @@ function Ufo(x, y, dx, size) {
     }
 
 }
+//alien move
 
 
 //particles are drawn on screen when we kill an alien
@@ -259,7 +306,7 @@ window.addEventListener("keydown", (e)=>{
 })
 //initializing the balls at teh beggining 
 
-setInterval(()=>{ufoArray.push(new Ufo(-100, 100,3,4))}, 10000)
+setInterval(()=>{ufoArray.push(new Ufo(-100, 100,3,4))}, ((Math.random() + 1) * 10000 + 10000))
 
 function init(){
     score = 0;
