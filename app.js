@@ -363,21 +363,21 @@ function animate() {
         alienArray.forEach((alien, alienIndex)=>{
             let dist = Math.hypot(bullet.x - alien.x, bullet.y - alien.y)
             //when they close up to a distance it means that they are in contact
-            if (dist < 7 * alien.size) {
+            if (dist < 6 * alien.size) {
                 //increase the score
                 score += 100;
                 scoreE.innerHTML  = score;
                 for (let i = 0; i < 20; i++) {
                     particles.push(new Particles(
-                        circle.x,
-                        circle.y, 
+                        bullet.x,
+                        bullet.y, 
                         (Math.random() - 0.5) * (Math.random() * 9),
                         (Math.random() - 0.5) * (Math.random() * 9),
                         3 * Math.random()))
                 }
                 setTimeout(() => {
                     bullets.splice(index, 1);
-                    alien.splice(alienIndex, 1);                    
+                    alienArray.splice(alienIndex, 1);                    
                 }, 0);               
             }
         })
