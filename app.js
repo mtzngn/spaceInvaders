@@ -1,3 +1,4 @@
+//initialize the acces to canvas api
 const canvas = document.querySelector("canvas");
 canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight -50;
@@ -11,19 +12,23 @@ const bigScore = document.querySelector("#bigScore");
 //in colorArray the given colors randomly appointed to the balls
 let colorArray = [
     "#ffffff",
+    "#FF0000",
+    "#FF0000",
+    "#FF0000",
 ]
+//arrays to be used to hold game objects
 let bullets = [];
 let particles = [];
 let starArray = [];
 let alienArray = [];
 
-
+//flags for keyboard usage for controls
 let key = {
     left: false,
     right: false,
     fire : false,
 }
-
+//flags to control aliens movements
 let goRight = true;
 let goDown = false;
 // resize the size of canvas according to what user adjusts their browser
@@ -32,7 +37,7 @@ addEventListener("resize", function() {
     canvas.height = window.innerHeight;
     init();
 })
-
+//stars are used to create a background
 function Stars(x, y, radius) {
     this.x = x;
     this.y = y;
@@ -43,25 +48,24 @@ function Stars(x, y, radius) {
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         c.fillStyle = "#ffffff";
         c.fill();
-        
     }
-
     this.update = function () {
         this.draw()
     }
 }
-//CREATING PROPER ALIENS HERE TO BE CAHNGED WITH CIRCLES
+//Alien class is drawed to the screen
 function Alien(x, y, dx, dy, size) {
     this.x = x;
     this.y = y;
     this.dx= dx;
     this.dy = dy;
     this.size = size;
-    this.color = colorArray[Math.floor(Math.random() * colorArray.length)]
+    this.color = colorArray[0]
 
     this.draw = function() {
         c.beginPath()
         c.fillStyle = this.color;
+
         //row0
         c.fillRect(this.x + this.size * 2, this.y, this.size ,this.size)
         c.fillRect(this.x + this.size * 7, this.y,this.size, this.size)
@@ -106,14 +110,63 @@ function Alien(x, y, dx, dy, size) {
 
         if (goDown == true) {
             alienArray.forEach((alien)=>{
-                alien.y += 10
+                alien.y += 20;
             })
             goDown = false;
         }
         this.draw()
     }
 }
+//ufo will be created with function below. it will come now and than and will give extra point when killed.
+function Ufo(x, y, dx, size) {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.size = size
+    this.color = colorArray[1]
 
+    this.draw = function() {
+
+        c.beginPath()
+        c.fillStyle = this.color;
+
+        //row0
+        c.fillRect(this.x + this.size * 4, this.y, this.size * 8, this.size)
+        //row1
+        c.fillRect(this.x + this.size * 2, this.y + this.size, this.size * 12, this.size)
+        //row2
+        c.fillRect(this.x + this.size , this.y + this.size * 2, this.size * 2, this.size)
+        c.fillRect(this.x + this.size * 4, this.y + this.size * 2, this.size * 2, this.size)
+        c.fillRect(this.x + this.size * 7, this.y + this.size * 2, this.size * 2, this.size)
+        c.fillRect(this.x + this.size * 10, this.y + this.size * 2, this.size * 2, this.size)
+        c.fillRect(this.x + this.size * 13, this.y + this.size * 2, this.size * 2, this.size)
+        //row3
+        c.fillRect(this.x, this.y + this.size * 3, this.size * 16, this.size)
+        //row4
+        c.fillRect(this.x + this.size * 2, this.y + this.size * 4, this.size * 3, this.size)
+        c.fillRect(this.x + this.size * 7, this.y + this.size * 4, this.size * 2, this.size)
+        c.fillRect(this.x + this.size * 11, this.y + this.size * 4, this.size * 3, this.size)
+        //row5
+        c.fillRect(this.x + this.size * 3, this.y + this.size * 5, this.size , this.size)
+        c.fillRect(this.x + this.size * 12, this.y + this.size * 5, this.size , this.size)
+
+       
+
+
+        c.closePath()
+    }
+
+    this.update = function() {
+        this.x += dx
+        this.draw()
+    }
+
+}
+let ufo1 = new Ufo(100,100,2,5)
+
+
+console.log(ufo1)
+//particles are drawn on screen when we kill an alien
 const friction = 0.99;
 function Particles(x, y, dx, dy, radius) {
     this.x = x;
@@ -141,19 +194,20 @@ function Particles(x, y, dx, dy, radius) {
         this.alpha -= 0.01;
     }
 }
+
 function Shooter(x, y,){
     this.x = x;
     this.y = y;
 
     this.draw = function() {
         c.beginPath();
-        c.fillStyle = "rgba(255, 255, 255, 0.7)";
+        c.fillStyle = "rgba(255, 255, 255, 1)";
         c.fillRect(this.x, this.y, 60, 20);
         c.moveTo((this.x + 30) - 2.5, this.y);
         c.lineTo((this.x + 30) - 2.5, this.y - 5);
         c.lineTo((this.x + 30) + 2.5, this.y -5);
         c.lineTo((this.x + 30) + 2.5, this.y );
-        c.strokeStyle = "rgba(255, 255, 255, 0.7)";
+        c.strokeStyle = "rgba(255, 255, 255, 1)";
         c.stroke()
     }
     //shooters right and left movement handled part1
@@ -177,7 +231,7 @@ function Bullet(x, y, dy) {
 
     this.draw = function() {
         c.beginPath()
-        c.fillStyle = "rgba(255, 255, 255, 0.7)"
+        c.fillStyle = "rgba(255, 255, 255, 0.8)"
         c.fillRect(this.x, this.y, 5, 15)
     }
     this.update = function() {
@@ -232,18 +286,21 @@ function init(){
             alienArray.push(new Alien(x, y, dx, dy, size))
         }
     }
-    
 
 }
-let AnimationId
+let AnimationId;
 const shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
 let score = 0;
 
 
 function animate() {
     AnimationId = requestAnimationFrame(animate);
+    //below 2 lines cleans the screen each time we call animate. which actually creates the frames.
     c.fillStyle = "rgba(0, 0, 0, 0.8)"
     c.fillRect(0, 0, innerWidth,  innerHeight);
+
+
+    ufo1.update();
 
     alienArray.forEach((alien)=>{
         alien.update()
@@ -252,10 +309,10 @@ function animate() {
     starArray.forEach((star)=>{
         star.update()
     })
-
+    //below code we constantly check the distance between aliens and our shooter and base line
     for (let i = 0; i < alienArray.length; i++) {
         alienArray[i].update();
-        //end game
+        //when aliens touch shooter the game is finishes
         const dist = Math.hypot((shooter.x / 2) - (alienArray[i].x / 2), (shooter.y / 2) - (alienArray[i].y / 2))
         if(dist < alienArray[i].size * 5 || alienArray[i].y > innerHeight - 100) {
             cancelAnimationFrame(AnimationId);
@@ -263,6 +320,7 @@ function animate() {
             bigScore.innerHTML = score;
         }
     }
+
     shooter.update();
     particles.forEach((particle, index)=>{
         if (particle.alpha <= 0.01) {
@@ -280,7 +338,7 @@ function animate() {
         }
 
         bullet.update();
-
+        //check when a bullet hits an alien
         alienArray.forEach((alien, alienIndex)=>{
             let dist = Math.hypot(bullet.x - alien.x - alien.size * 5, bullet.y - alien.y - alien.size * 4)
             //when they close up to a distance it means that they are in contact
@@ -296,13 +354,13 @@ function animate() {
                         (Math.random() - 0.5) * (Math.random() * 9),
                         3 * Math.random()))
                 }
+                //below code utilize a smoother transition
                 setTimeout(() => {
                     bullets.splice(index, 1);
                     alienArray.splice(alienIndex, 1);                    
                 }, 0);               
             }
         })
-
 
     })
 }
