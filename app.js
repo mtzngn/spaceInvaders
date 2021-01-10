@@ -306,7 +306,7 @@ window.addEventListener("keydown", (e)=>{
 })
 //initializing the balls at teh beggining 
 
-setInterval(()=>{ufoArray.push(new Ufo(-100, 100,3,4))}, ((Math.random() + 1) * 10000 + 10000))
+setInterval(()=>{ufoArray.push(new Ufo(-100, 100,3,4))}, ((Math.random() + 1)  + 10000))
 
 function init(){
     score = 0;
@@ -410,6 +410,28 @@ function animate() {
                     alienArray.splice(alienIndex, 1);                    
                 }, 0);               
             }
+        })
+        ufoArray.forEach((ufo, ufoIndex) =>{
+            let dist = Math.hypot(bullet.x - ufo.x - ufo.size * 8, bullet.y - ufo.y - ufo.size * 3)
+            if (dist < 5 * ufo.size) {
+                score += 500;
+                scoreE.innerHTML  = score;
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particles(
+                        bullet.x,
+                        bullet.y, 
+                        (Math.random() - 0.5) * (Math.random() * 9),
+                        (Math.random() - 0.5) * (Math.random() * 9),
+                        3 * Math.random()))
+                }
+                //below code utilize a smoother transition
+                setTimeout(() => {
+                    bullets.splice(index, 1);
+                    ufoArray.splice(ufoIndex, 1);                    
+                }, 0); 
+            }
+
+
         })
 
     })
