@@ -1,22 +1,24 @@
-var canvas = document.querySelector("canvas");
+const canvas = document.querySelector("canvas");
 canvas.width = window.innerWidth -50;
 canvas.height = window.innerHeight -50;
 
-var c = canvas.getContext("2d");
+const c = canvas.getContext("2d");
 
 const scoreE = document.querySelector("#scoreE");
 const startGameBtn = document.querySelector("#startGameBtn");
 const modal = document.querySelector("#modal");
 const bigScore = document.querySelector("#bigScore");
 //in colorArray the given colors randomly appointed to the balls
-var colorArray = [
+let colorArray = [
     "#ffffff",
 ]
 let bullets = [];
 let circleArray = [];
 let particles = [];
+let starArray = [];
 
-var key = {
+
+let key = {
     left: false,
     right: false,
     fire : false,
@@ -30,7 +32,23 @@ addEventListener("resize", function() {
     canvas.height = window.innerHeight;
     init();
 })
+function Stars(x, y, radius) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
 
+    this.draw = function () {
+        c.beginPath()
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        c.fillStyle = "#ffffff";
+        c.fill();
+        
+    }
+
+    this.update = function () {
+        this.draw()
+    }
+}
 function Circle(x, y, dx, dy, radius) {
     this.x = x;
     this.y = y;
@@ -172,26 +190,38 @@ function init(){
     circleArray = [];
     particles = [];
     circleArray = [];
-    for(var j = 1; j < 5; j++) {
-        for (var i =1; i < 16; i++) {
-            var radius = 20;
-            var x = 150 + (i *70) ;
-            var y = 10 + (j *60);
-            var dx = 1;
-            var dy = 100;
+    for(let j = 1; j < 5; j++) {
+        for (let i =1; i < 16; i++) {
+            let radius = 15;
+            let x = 150 + (i *70) ;
+            let y = 10 + (j *60);
+            let dx = 1;
+            let dy = 100;
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
+    for(let k = 1; k < 200; k++){
+        let x = (Math.random() * innerWidth)
+        let y = (Math.random() * innerHeight)
+        let radius = (Math.random() ) * 2
+        starArray.push(new Stars(x, y, radius))
+    }
 }
 let AnimationId
-var shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
+const shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
 let score = 0;
+
+
 function animate() {
     AnimationId = requestAnimationFrame(animate);
     c.fillStyle = "rgba(0, 0, 0, 0.15)"
     c.fillRect(0, 0, innerWidth,  innerHeight);
+    
+    starArray.forEach((star)=>{
+        star.update()
+    })
 
-    for (var i = 0; i < circleArray.length; i++) {
+    for (let i = 0; i < circleArray.length; i++) {
         circleArray[i].update();
         //end game
         const dist = Math.hypot(shooter.x - circleArray[i].x, shooter.y - circleArray[i].y)
