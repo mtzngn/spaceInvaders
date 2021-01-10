@@ -21,6 +21,7 @@ let bullets = [];
 let particles = [];
 let starArray = [];
 let alienArray = [];
+let ufoArray = [];
 
 //flags for keyboard usage for controls
 let key = {
@@ -150,22 +151,18 @@ function Ufo(x, y, dx, size) {
         c.fillRect(this.x + this.size * 3, this.y + this.size * 5, this.size , this.size)
         c.fillRect(this.x + this.size * 12, this.y + this.size * 5, this.size , this.size)
 
-       
-
-
         c.closePath()
     }
 
     this.update = function() {
-        this.x += dx
+
+        this.x += this.dx
         this.draw()
     }
 
 }
-let ufo1 = new Ufo(100,100,2,5)
 
 
-console.log(ufo1)
 //particles are drawn on screen when we kill an alien
 const friction = 0.99;
 function Particles(x, y, dx, dy, radius) {
@@ -261,6 +258,9 @@ window.addEventListener("keydown", (e)=>{
     }
 })
 //initializing the balls at teh beggining 
+
+setInterval(()=>{ufoArray.push(new Ufo(-100, 100,3,4))}, 10000)
+
 function init(){
     score = 0;
     scoreE.innerHTML = score;
@@ -286,7 +286,6 @@ function init(){
             alienArray.push(new Alien(x, y, dx, dy, size))
         }
     }
-
 }
 let AnimationId;
 const shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
@@ -300,8 +299,12 @@ function animate() {
     c.fillRect(0, 0, innerWidth,  innerHeight);
 
 
-    ufo1.update();
-
+    ufoArray.forEach((ufo, index) =>{
+        if (ufo.x > innerWidth) {
+            ufoArray.splice(index, 1)
+        }
+        ufo.update()
+    })
     alienArray.forEach((alien)=>{
         alien.update()
     })
