@@ -32,6 +32,7 @@ addEventListener("resize", function() {
     canvas.height = window.innerHeight;
     init();
 })
+
 function Stars(x, y, radius) {
     this.x = x;
     this.y = y;
@@ -49,6 +50,56 @@ function Stars(x, y, radius) {
         this.draw()
     }
 }
+//CREATING PROPER ALIENS HERE TO BE CAHNGED WITH CIRCLES
+function Alien(x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.color = colorArray[Math.floor(Math.random() * colorArray.length)]
+
+    this.draw = function() {
+        c.beginPath()
+        c.fillStyle = this.color;
+        //row0
+        c.fillRect(this.x + this.size * 2, this.y, this.size ,this.size)
+        c.fillRect(this.x + this.size * 7, this.y,this.size, this.size)
+        //row1
+        c.fillRect(this.x + this.size * 3, this.y + this.size, this.size ,this.size)
+        c.fillRect(this.x + this.size * 6, this.y + this.size, this.size, this.size)
+        //row2
+        c.fillRect(this.x + this.size * 2, this.y + 2 * this.size, this.size * 6 ,this.size)
+        //row3
+        c.fillRect(this.x + this.size , this.y + 3 * this.size, this.size * 2 ,this.size)
+        c.fillRect(this.x + this.size * 4, this.y + 3 * this.size, this.size * 2 ,this.size)
+        c.fillRect(this.x + this.size * 7, this.y + 3 * this.size, this.size * 2 ,this.size)
+        //row4
+        c.fillRect(this.x , this.y + 4 * this.size, this.size * 10 ,this.size)
+        //row5
+        c.fillRect(this.x , this.y + 5 * this.size, this.size, this.size)
+        c.fillRect(this.x + this.size * 2, this.y + 5 * this.size, this.size * 6, this.size)
+        c.fillRect(this.x + this.size * 9, this.y + 5 * this.size, this.size , this.size)
+        //row6
+        c.fillRect(this.x, this.y + 6 * this.size, this.size , this.size)
+        c.fillRect(this.x + this.size * 2, this.y + 6 * this.size, this.size, this.size)
+        c.fillRect(this.x + this.size * 7, this.y + 6 * this.size, this.size, this.size)
+        c.fillRect(this.x + this.size * 9, this.y + 6 * this.size, this.size, this.size)
+        //row6
+        c.fillRect(this.x + this.size * 3, this.y + 7 * this.size, this.size, this.size)
+        c.fillRect(this.x + this.size * 6, this.y + 7 * this.size, this.size, this.size)
+
+        c.closePath()
+    }
+
+    this.update = function() {
+        this.draw()
+    }
+
+}
+
+
+const alien1 = new Alien(50,50,5)
+
+//------------------------------------------------------
 function Circle(x, y, dx, dy, radius) {
     this.x = x;
     this.y = y;
@@ -216,6 +267,8 @@ function animate() {
     AnimationId = requestAnimationFrame(animate);
     c.fillStyle = "rgba(0, 0, 0, 0.15)"
     c.fillRect(0, 0, innerWidth,  innerHeight);
+
+    alien1.update()
     
     starArray.forEach((star)=>{
         star.update()
