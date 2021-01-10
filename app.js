@@ -16,6 +16,7 @@ let bullets = [];
 let circleArray = [];
 let particles = [];
 let starArray = [];
+let alienArray = [];
 
 
 let key = {
@@ -51,9 +52,11 @@ function Stars(x, y, radius) {
     }
 }
 //CREATING PROPER ALIENS HERE TO BE CAHNGED WITH CIRCLES
-function Alien(x, y, size) {
+function Alien(x, y, dx, dy, size) {
     this.x = x;
     this.y = y;
+    this.dx= dx;
+    this.dy = dy;
     this.size = size;
     this.color = colorArray[Math.floor(Math.random() * colorArray.length)]
 
@@ -91,13 +94,30 @@ function Alien(x, y, size) {
     }
 
     this.update = function() {
+        if (this.x + 10 * this.size > innerWidth - 50) {
+            goRight = false;
+            goDown = true;
+        }
+        else if(this.x < 0) {
+            goRight = true;
+        }
+        if (goRight == true) {
+            this.x += this.dx
+        } else {this.x -= this.dx;}
+
+        if (goDown == true) {
+            alienArray.forEach((alien)=>{
+                alien.y += 20
+            })
+            goDown = false;
+        }
         this.draw()
+
     }
 
 }
 
 
-const alien1 = new Alien(50,50,5)
 
 //------------------------------------------------------
 function Circle(x, y, dx, dy, radius) {
@@ -251,12 +271,25 @@ function init(){
             circleArray.push(new Circle(x, y, dx, dy, radius))
         }
     }
-    for(let k = 1; k < 200; k++){
+    for(let j = 1; j < 200; j++){
         let x = (Math.random() * innerWidth)
         let y = (Math.random() * innerHeight)
         let radius = (Math.random() ) * 2
         starArray.push(new Stars(x, y, radius))
     }
+
+    for(let j = 1; j < 5; j++) {
+        for (let i =1; i < 16; i++) {
+            let size = 5;
+            let x = 150 + (i *70) ;
+            let y = 10 + (j *60);
+            let dx = 1;
+            let dy = 100;
+            alienArray.push(new Alien(x, y, dx, dy, size))
+        }
+    }
+    
+
 }
 let AnimationId
 const shooter = new Shooter((innerWidth / 2), (innerHeight - 100));
@@ -268,7 +301,9 @@ function animate() {
     c.fillStyle = "rgba(0, 0, 0, 0.15)"
     c.fillRect(0, 0, innerWidth,  innerHeight);
 
-    alien1.update()
+    alienArray.forEach((alien)=>{
+        alien.update()
+    })
     
     starArray.forEach((star)=>{
         star.update()
@@ -303,12 +338,12 @@ function animate() {
         bullet.update();
 
         circleArray.forEach((circle, circleIndex)=>{                      
-            const dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
+            let dist = Math.hypot(bullet.x - circle.x, bullet.y - circle.y)
             //objects touch
             if(dist - circle.radius < 0.5) {
                 //increse the score
                 score += 100;
-                scoreE.innerHTML  =score;
+                scoreE.innerHTML  = score;
                 //create particles
                 for (let i = 0; i < 20; i++) {
                     particles.push(new Particles(
@@ -324,6 +359,30 @@ function animate() {
                 }, 0);
             }
         })
+
+        alienArray.forEach((alien, alienIndex)=>{
+            let dist = Math.hypot(bullet.x - alien.x, bullet.y - alien.y)
+            //when they close up to a distance it means that they are in contact
+            if (dist < 7 * alien.size) {
+                //increase the score
+                score += 100;
+                scoreE.innerHTML  = score;
+                for (let i = 0; i < 20; i++) {
+                    particles.push(new Particles(
+                        circle.x,
+                        circle.y, 
+                        (Math.random() - 0.5) * (Math.random() * 9),
+                        (Math.random() - 0.5) * (Math.random() * 9),
+                        3 * Math.random()))
+                }
+                setTimeout(() => {
+                    bullets.splice(index, 1);
+                    alien.splice(alienIndex, 1);                    
+                }, 0);               
+            }
+        })
+
+
     })
 }
 startGameBtn.addEventListener("click", ()=>{
