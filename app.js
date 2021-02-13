@@ -324,7 +324,7 @@ function init(){
     }
 
     for(let j = 1; j < 5; j++) {
-        for (let i =1; i < 16; i++) {
+        for (let i =1; i < 16 ; i++) {
             let size = 4;
             let x = 150 + (i *70) ;
             let y = 10 + (j *60);
@@ -340,6 +340,11 @@ let score = 0;
 
 
 function animate() {
+    if (alienArray.length == 0) {
+        cancelAnimationFrame(AnimationId);
+        modal.style.display = "flex";
+        bigScore.innerHTML = score;
+    }
     AnimationId = requestAnimationFrame(animate);
     //below 2 lines cleans the screen each time we call animate. which actually creates the frames.
     c.fillStyle = "rgba(0, 0, 0, 0.8)"
